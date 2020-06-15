@@ -1,15 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.weshau.com</id>
-    <title>Gridea</title>
-    <updated>2020-06-15T10:27:48.692Z</updated>
+    <title>Weshau</title>
+    <updated>2020-06-15T11:22:38.575Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.weshau.com"/>
     <link rel="self" href="https://blog.weshau.com/atom.xml"/>
     <subtitle>温故而知新</subtitle>
     <logo>https://blog.weshau.com/images/avatar.png</logo>
     <icon>https://blog.weshau.com/favicon.ico</icon>
-    <rights>All rights reserved 2020, Gridea</rights>
+    <rights>All rights reserved 2020, Weshau</rights>
+    <entry>
+        <title type="html"><![CDATA[Javascript-原型与原型链]]></title>
+        <id>https://blog.weshau.com/post/javascript-yuan-xing-yu-yuan-xing-lian/</id>
+        <link href="https://blog.weshau.com/post/javascript-yuan-xing-yu-yuan-xing-lian/">
+        </link>
+        <updated>2020-06-15T11:07:17.000Z</updated>
+        <content type="html"><![CDATA[<h4 id="1原型prototype">1.原型prototype</h4>
+<p>原型是一个对象，把prototype称为原型对象，prototype可以让所有的对象实例共享它包含的属性和方法。</p>
+<p>JavaScript规定，每一个函数都有一个prototype对象属性，指向另一个对象。</p>
+<p>prototype对象属性的所有属性和方法都会被构造函数的实例继承。</p>
+<h4 id="2只有函数有prototype属性">2.只有函数有prototype属性</h4>
+<p>js分为函数对象和普通对象，每个对象都有__proto__属性，但是只有函数对象才有prototype属性</p>
+<pre><code>let a = {}
+let func = function () { }
+
+console.log(a.prototype) // undefined
+console.log(func.prototype) // { constructor: function(){...} }
+</code></pre>
+<p>JS通过new关键字，即靠构造函数生成对象，每次生成的对象都不一样。</p>
+<p>因为常常需要在两个对象之间共享属性，由于JS在设计之初没有类的概念，所以JS使用函数的prototype属性来处理这部分需要被共享的属性。</p>
+<h4 id="3构造函数创建对象">3.构造函数创建对象</h4>
+<pre><code>function Animal() {
+}
+Animal.prototype.name = 'kiki';
+
+var animal1 = new Animal();
+var animal2 = new Animal();
+
+console.log(animal1.name, animal2.name) // kiki kiki
+</code></pre>
+<p>在上述代码中，函数的 prototype 属性指向了一个对象，这个对象正是调用该构造函数而创建的实例的原型，也就是这个例子中的animal1和animal2的原型</p>
+<p>每一个JavaScript对象(null除外)在创建的时候就会与之关联另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型&quot;继承&quot;属性。</p>
+<p>构造函数和实例原型关系如下图：</p>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/acolehau/lime/raw/master/img/20200615191944.jpg" alt="img" loading="lazy"></figure>
+<h4 id="4proto">4.<strong>proto</strong></h4>
+<p>那么如何表示实例与实例原型之间的关系呢，这里需要讲到另一个属性__proto__</p>
+<p>每一个JavaScript对象(除了 null)都具有的一个属性，叫__proto__，这个属性会指向该对象的原型</p>
+<pre><code>function Animal(){
+}
+
+var dog = new Animal();
+
+console.log(dog.__proto__ === Animal.prototype); // true
+</code></pre>
+<p>于是更新实例与实例原型之间的关系如下图：</p>
+<figure data-type="image" tabindex="2"><img src="https://gitee.com/acolehau/lime/raw/master/img/20200615192034.jpg" alt="img" loading="lazy"></figure>
+<h4 id="5constructor">5.constructor</h4>
+<p>每个原型都有一个constructor属性指向关联的构造函数</p>
+<pre><code>function Animal() {
+}
+
+console.log(Animal === Animal.prototype.constructor); // true
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://gitee.com/acolehau/lime/raw/master/img/20200615192056.jpg" alt="img" loading="lazy"></figure>
+<p>则可以得出：</p>
+<pre><code>function Animal() {
+}
+var dog = new Animal();
+
+console.log(dog.__proto__ === Animal.prototype) // true
+
+// Object.getPrototypeOf() 方法返回指定对象的原型
+console.log(Object.getPrototypeOf(dog) === Animal.prototype) // true
+
+console.log(Animal.prototype.constructor == Animal) // true
+</code></pre>
+<p>再提一点：</p>
+<pre><code>function Animal() {
+}
+var dog = new Animal();
+
+console.log(dog.constructor === Animal); // true
+
+/* 
+当获取 dog.constructor 时，其实 dog 中并没有 constructor 属性,
+当不能读取到constructor 属性时，
+会从 dog 的原型也就是 Animal.prototype 中读取，正好原型中有该属性, 所以下列代码为true 
+*/
+
+dog.constructor === Animal.prototype.constructor
+</code></pre>
+<h4 id="6实例和原型">6.实例和原型</h4>
+<p>当读取实例的属性时，如果找不到，就会查找与对象关联的原型中的属性，如果还查不到，就去找原型的原型，一直找到最顶层为止。</p>
+<pre><code>function Animal() {
+
+}
+
+Animal.prototype.name = 'kiki';
+
+var dog = new Animal();
+
+dog.name = 'xiaobai';
+console.log(dog.name) // xiaobai
+
+delete dog.name;
+console.log(dog.name) // kiki
+</code></pre>
+<p>上述代码。首先构造函数原型设置了 name值，接着dog实例添加了name属性，覆盖原型的name值，打印dog.name时结果自然是xiaobai。</p>
+<p>当删除了dog的name属性时，读取dog.name时，从对象中无法找到name属性，就会从dog的原型，也就是dog.<strong>proto</strong>，即Animal.prototype中查找，找到结果为kiki。</p>
+<p>如果原型没有设置name值，找不到呢？原型的原型又是谁？</p>
+<h4 id="7原型的原型">7.原型的原型</h4>
+<p>原型本身也是一个对象，既然是对象，我们就可以用最原始的方式创建它：</p>
+<pre><code>var obj = new Object();
+obj.name = 'kiki'
+console.log(obj.name) // kiki
+</code></pre>
+<p>其实原型对象就是通过 Object 构造函数生成的，所有函数的 默认原型 都是 Object 的实例，因此默认原型都会包含一个内部指针，指向 Object.prototype。</p>
+<p>由此，更新关系图：</p>
+<figure data-type="image" tabindex="4"><img src="https://gitee.com/acolehau/lime/raw/master/img/20200615192120.jpg" alt="img" loading="lazy"></figure>
+<h4 id="8原型链">8.原型链</h4>
+<ol>
+<li>每个对象都拥有一个原型对象: dog的原型是Animal.prototype。</li>
+<li>对象的原型可能也是继承其他原型对象的: Animal.prototype 也有它的原型Object.prototype。</li>
+<li>一层一层的，以此类推，这种关系就是原型链。</li>
+</ol>
+<p>那么<code>Object.prototype</code>的原型是什么呢？</p>
+<pre><code>console.log(Object.prototype.__proto__ === null) // true
+
+const proto = Object.getPrototypeOf(Object.prototype) // null
+</code></pre>
+<p>所以 Object.prototype.<strong>proto</strong> 的值为 null 跟 Object.prototype 没有原型，其实表达了一个意思。null 表示此处不应该有值，也就是原型链的终点了，所以查找属性的时候查到 Object.prototype 就可以停止查找了。</p>
+<figure data-type="image" tabindex="5"><img src="https://gitee.com/acolehau/lime/raw/master/img/20200615192150.jpg" alt="img" loading="lazy"></figure>
+<p>上图中的红色线组成的链就可以称之为原型链。</p>
+<p>由上述关系图我们可以重新描述一下原型链：</p>
+<blockquote>
+<p>从一个实例对象开始往上找，这个实例对象的__proto__属性所指向的则是这个实例对象的原型对象，如果用dog表示这个实例，则原型对象表示为<code>dog.__proto__</code>。同时，这个原型也是一个对象，而且它也有上一级的原型对象，相对于上一级原型对象而言，它也是一个实例对象，那么它也拥有__proto__属性，它的__proto__属性也指向它的原型对象，后面也以此类推，一直到Object.prototype这个原型为止，这就是整个原型链。</p>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Git 常用命令]]></title>
         <id>https://blog.weshau.com/post/git-chang-yong-ming-ling/</id>
@@ -277,38 +406,6 @@ $ git stash pop
 <pre><code># 生成一个可供发布的压缩包
 $ git archive
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>https://blog.weshau.com/post/hello-gridea/</id>
-        <link href="https://blog.weshau.com/post/hello-gridea/">
-        </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-<!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
 ]]></content>
     </entry>
 </feed>
