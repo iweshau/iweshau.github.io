@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.weshau.com</id>
     <title>Weshau</title>
-    <updated>2020-06-15T11:33:09.477Z</updated>
+    <updated>2020-06-15T11:45:29.522Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.weshau.com"/>
     <link rel="self" href="https://blog.weshau.com/atom.xml"/>
@@ -16,11 +16,11 @@
         <link href="https://blog.weshau.com/post/javascript-yuan-xing-yu-yuan-xing-lian/">
         </link>
         <updated>2020-06-15T11:07:17.000Z</updated>
-        <content type="html"><![CDATA[<h4 id="1原型prototype">1.原型prototype</h4>
+        <content type="html"><![CDATA[<h4 id="1原型-prototype">1.原型 prototype</h4>
 <p>原型是一个对象，把prototype称为原型对象，prototype可以让所有的对象实例共享它包含的属性和方法。</p>
 <p>JavaScript规定，每一个函数都有一个prototype对象属性，指向另一个对象。</p>
 <p>prototype对象属性的所有属性和方法都会被构造函数的实例继承。</p>
-<h4 id="2只有函数有prototype属性">2.只有函数有prototype属性</h4>
+<h4 id="2只有函数有-prototype-属性">2.只有函数有 prototype 属性</h4>
 <p>js分为函数对象和普通对象，每个对象都有__proto__属性，但是只有函数对象才有prototype属性</p>
 <pre><code>let a = {}
 let func = function () { }
